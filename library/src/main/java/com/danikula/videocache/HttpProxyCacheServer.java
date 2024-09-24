@@ -309,7 +309,7 @@ public class HttpProxyCacheServer {
     }
 
     private void onError(Throwable e) {
-        LOG.error("HttpProxyCacheServer error", e);
+        LOG.error("HttpProxyCacheServer error", e.getMessage());
     }
 
     private final class WaitRequestsRunnable implements Runnable {
