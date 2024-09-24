@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.library'
+    //jitpack库上传所需
+    id 'maven-publish'
+}
+
+android {
+
+    compileSdkVersion rootProject.ext.androidCompileSdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true // 添加多密度矢量图形
+
+        buildConfigField "int", "VERSION_CODE", "${versionCode}"
+        buildConfigField "String", "VERSION_NAME", "\"${versionName}\""
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            android.libraryVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "videocache_sdk_${variant.buildType.name}.aar"
+                }
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-android:1.7.36'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication){
+                from components.release
+                //建议和github地址对应，否则对jitpack无效
+                groupId = "${groupId}"
+                //建议和github仓库名称对应，否则对jitpack无效
+                artifactId = "${artifactId}"
+                //建议和release的tag相同，否则对jitpack无效
+                version = "${versionName}"
+            }
+        }
+    }
+}
